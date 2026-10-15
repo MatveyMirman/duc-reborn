@@ -1,0 +1,50 @@
+# Dependencies
+node_modules/
+frontend/node_modules/
+
+# Build outputs
+backend/target/
+backend/dist
+backend/dist/
+frontend/dist/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# AI Agents
+.opencode/
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment
+.env
+backend/.env
+.env.local
+*.local
+
+# Logs
+*.log
+npm-debug.log*
+
+# Database
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+backend/duc.db
+data/
+
+# Tree files
+backend/trees/
+
+# Temporary
+tmp/
+temp/
+
+# Cookies / secrets
+cookies.txt
+backend/cookies.txt
