@@ -1,0 +1,20 @@
+services:
+  duc-reborn:
+    image: duc-reborn:latest
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    ports:
+      - "8080:8080"
+    volumes:
+      - ../data:/data
+      - /:/scan/root:ro
+    environment:
+      - RUST_LOG=info
+      - DUC_DB_PATH=/data/duc.db
+      - DUC_ADMIN_USERNAME=admin
+      - DUC_ADMIN_PASSWORD=changeme
+      - DUC_REQUIRE_AUTH=true
+      - DUC_PORT=8080
+      - DUC_CORS_ORIGINS=http://localhost:8080
+    restart: unless-stopped

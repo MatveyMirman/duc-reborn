@@ -1,0 +1,44 @@
+stages:
+  - test
+  - build
+
+test-backend:
+  stage: test
+  image: rust:1.88
+  script:
+    - cd backend
+    - rustup component add clippy
+    - cargo check --quiet
+    - cargo clippy -- -D warnings
+  tags:
+    - docker
+
+test-frontend:
+  stage: test
+  image: node:20-alpine
+  script:
+    - cd frontend
+    - npm ci
+    - npm run build
+  tags:
+    - docker
+
+build-image:
+  stage: build
+  image:
+    name: quay.io/buildah/stable:v1.43.0
+    entrypoint: [""]
+  before_script:
+    - echo "{\"auths\":{\"${CI_REGISTRY}\":{\"auth\":\"$(printf "%s:%s" "${CI_REGISTRY_USER}" "${CI_REGISTRY_PASSWORD}" | base64 | tr -d '\n')\"}}}" > /tmp/dockerconfig.json
+  script:
+    - |
+      buildah bud \
+        --authfile /tmp/dockerconfig.json \
+        --cert-dir /etc/gitlab-runner/certs/ \
+        --file docker/Dockerfile \
+        --tls-verify=false \
+        --tag=${CI_REGISTRY_IMAGE}:$CI_COMMIT_BRANCH \
+        .
+    - buildah push --authfile /tmp/dockerconfig.json --cert-dir /etc/gitlab-runner/certs/ --tls-verify=false ${CI_REGISTRY_IMAGE}:$CI_COMMIT_BRANCH
+  tags:
+    - docker
